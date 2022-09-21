@@ -4,7 +4,67 @@ import shap
 # define the function
 import tensorflow as tf
 import numpy as np
+import cv2
 
+def readImage(display = True):
+    # To read image from disk, we use
+    # cv2.imread function, in below method,
+    img = cv2.imread("data_source/forest.jpg", cv2.IMREAD_COLOR)
+    return img
+
+def showImage(image):
+    cv2.imshow("data_source", cv2.resize(image,(500,500)))
+    cv2.waitKey(0)
+def drawRectangle(x1,y1,x2,y2,image):
+    start_point = (x1, y1)
+    end_point = (x2, y2)
+    # Blue color in BGR
+    color = (255, 0, 0)
+    # Line thickness of 2 px
+    thickness = 2
+
+    # Using cv2.rectangle() method
+    # Draw a rectangle with blue line borders of thickness of 2 px
+    image = cv2.rectangle(image, start_point, end_point, color, thickness)
+    return image
+
+def drawText(blockSize, image, row, column):
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    # font
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    # org
+    org = (row*blockSize+blockSize//2-15, column*blockSize+blockSize//2)
+    # fontScale
+    fontScale = 1
+    # Blue color in BGR
+    color = (255, 255, 255)
+    # Line thickness of 2 px
+    thickness = 2
+    # Using cv2.putText() method
+    cv2.putText(image, letters[row]+str(column+1), org, font,
+                        fontScale, color, thickness, cv2.LINE_AA)
+    return 0
+def drawMask(blockSize, image, shouldDrawText = False):
+    # Line thickness of 2 px
+    thickness = 2
+
+    for i in range(1000):
+        if i%blockSize == 0:
+            for k in range(1000//blockSize):
+                print("draw text on" + str(i // blockSize) + ", " + str(k // blockSize))
+                drawText(blockSize,image,i//blockSize,k)
+
+            # draw horizontal line
+            color = (255, 0, 0)
+            start_point = (0, i)
+            end_point = (999, i)
+            cv2.line(image, start_point, end_point, color, thickness)
+            #draw vertical line
+            color = (0, 255, 0)
+            start_point = (i, 0)
+            end_point = (i, 999)
+            cv2.line(image, start_point, end_point, color, thickness)
+    return image
 '''
 Use shap to build an a explainer.
 :parameter
@@ -172,10 +232,13 @@ def print_hi(name):
 
 X = np.random.rand(1000,10)
 y = np.random.choice([1,0], size=1000)
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    
+    image = readImage()
+    drawMask(100,image=image,shouldDrawText=True)
+    showImage(image)
     n_features = 10
     model = models.Sequential(name="DeepNN", layers=[
         ### hidden layer 1
