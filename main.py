@@ -20,6 +20,7 @@ Use shap to build an a explainer.
 def explainer_shap(model, X_names, X_instance, X_train=None, task="classification", top=10):
     ## create explainer
     ### machine learning
+    plt.figure()
     if X_train is None:
         explainer = shap.TreeExplainer(model)
         shap_values = explainer.shap_values(X_instance)
@@ -27,6 +28,7 @@ def explainer_shap(model, X_names, X_instance, X_train=None, task="classificatio
     else:
         explainer = shap.DeepExplainer(model, data=X_train[:100])
         shap_values = explainer.shap_values(X_instance.reshape(1,-1))[0].reshape(-1)
+    plt.show(block = False)
 
     ## plot
     ### classification
@@ -156,7 +158,7 @@ def visualize_nn(model, description=False, figsize=(10, 8)):
                         ax.add_artist(line)
                 else:
                     ax.add_artist(line)
-    plt.show()
+    plt.show(block=False)
 
 
 def binary_step_activation(x):
@@ -172,7 +174,8 @@ X = np.random.rand(1000,10)
 y = np.random.choice([1,0], size=1000)
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+
+    
     n_features = 10
     model = models.Sequential(name="DeepNN", layers=[
         ### hidden layer 1
@@ -222,7 +225,7 @@ if __name__ == '__main__':
     for metric in metrics:
         ax22.plot(training.history['val_' + metric], label=metric)
         ax22.set_ylabel("Score", color="steelblue")
-    plt.show()
+    plt.show(block=False)
 
     print("predict for")
     print(X[:1])
